@@ -2,9 +2,19 @@
 #include <iostream> // For outputting error messages
 
 // Constructor
-Portfolio::Portfolio(double starting_balance = 0.0) {
+Portfolio::Portfolio(double starting_balance) {
     m_cash = starting_balance; 
     m_bank_balance = 0.0; 
+}
+
+// Get cash 
+double Portfolio::get_cash() {
+    return m_cash; 
+}
+
+// Set Cash
+void Portfolio::set_cash(double amount) {
+    m_cash = amount; 
 }
 
 // Get for bank balance
@@ -12,13 +22,34 @@ double Portfolio::get_bank_balance() {
     return m_bank_balance;
 }
 
-// Method to invest in a stock
-void Portfolio::invest_in_stock(const Stock& stock, int shares) {
-    if (shares <= 0) {
-        cerr << "Error: Number of shares must be positive." << endl;
-        return;
+// Desposit money into bank account
+void Portfolio::deposit_in_bank(double amount) {
+    if (amount <= 0){
+        cerr << "Error: Invalid amount" << endl;
     }
-    m_stocks[stock] += shares;
+
+    if (m_cash - amount >= 0){
+        m_cash -= amount; 
+        m_bank_balance += amount;
+    }
+    else {
+        cerr << "Error: Insufficient funds" << endl;
+    }
+}
+
+// Withdraw
+void Portfolio::withdraw_from_bank(double amount){
+    if (amount <= 0){
+        cerr << "Error: Invalid amount" << endl;
+    }
+
+    if (m_bank_balance - amount >= 0){
+        m_bank_balance -= amount; 
+        m_cash += amount;
+    }
+    else {
+        cerr << "Error: Insufficient funds" << endl;
+    }
 }
 
 // Method to get the value of a specific stock
@@ -52,34 +83,13 @@ int Portfolio::get_number_of_shares(const Stock& stock) {
     }
 }
 
-// Desposit money into bank account
-void Portfolio::deposit_in_bank(double amount) {
-    if (amount <= 0){
-        cerr << "Error: Invalid amount" << endl;
+// Method to invest in a stock
+void Portfolio::invest_in_stock(const Stock& stock, int shares) {
+    if (shares <= 0) {
+        cerr << "Error: Number of shares must be positive." << endl;
+        return;
     }
-
-    if (m_cash - amount >= 0){
-        m_cash -= amount; 
-        m_bank_balance += amount;
-    }
-    else {
-        cerr << "Error: Insufficient funds" << endl;
-    }
-}
-
-// Withdraw
-void Portfolio::withdraw_from_bank(double amount){
-    if (amount <= 0){
-        cerr << "Error: Invalid amount" << endl;
-    }
-
-    if (m_bank_balance - amount >= 0){
-        m_bank_balance -= amount; 
-        m_cash += amount;
-    }
-    else {
-        cerr << "Error: Insufficient funds" << endl;
-    }
+    m_stocks[stock] += shares;
 }
 
 // Sell your stocks

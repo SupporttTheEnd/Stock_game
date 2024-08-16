@@ -2,11 +2,12 @@
 #include "Stock.h"
 
 // Constructor
-Stock::Stock(const string& name, double price, int volatility, int mean) {
+Stock::Stock(const string& name, double price, int volatility, Sector sector) {
     m_name = name; 
     m_price = price; 
     m_volatility = volatility; 
-    m_mean = mean; 
+    m_mean = 0; 
+    m_sector = sector; 
 }
 
 // Getters
@@ -26,6 +27,10 @@ int Stock::get_mean() const {
     return m_mean;
 }
 
+Sector Stock::get_sector() const {
+    return m_sector; 
+}
+
 // Setters
 void Stock::set_name(const string& name) {
     m_name = name;
@@ -41,6 +46,10 @@ void Stock::set_volatility(int volatility) {
 
 void Stock::set_mean(int mean) {
     m_mean = mean;
+}
+
+void Stock::set_sector(Sector sector){
+    m_sector = sector; 
 }
 
 // Update stock price

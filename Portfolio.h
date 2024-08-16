@@ -13,10 +13,12 @@ public:
 
     // Get and set for cash 
     double get_cash();
-    void set_cash();
+    void set_cash(double amount);
 
-    // Get for bank balance
+    // Methods for bank balance
     double get_bank_balance();
+    void deposit_in_bank(double amount);
+    void withdraw_from_bank(double amount); 
 
     // Methods to get portfolio values
     double get_stock_value(const Stock& stock);
@@ -25,12 +27,6 @@ public:
 
     // Methods for managing investments
     void invest_in_stock(const Stock& stock, int shares);
-    void deposit_in_bank(double amount);
-
-    // Withdraw
-    void withdraw_from_bank(double amount); 
-
-    // Sell your stocks
     void sell_stock(const Stock& stock, double shares);
 
 private:

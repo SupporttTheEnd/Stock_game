@@ -6,10 +6,23 @@
 
 using namespace std;
 
+enum Sector {
+    TECH,
+    HEALTH,
+    FINANCE,
+    ENERGY,
+    CONSUMER,
+    INDUSTRIALS,
+    UTILITIES,
+    REAL_ESTATE,
+    COMMUNICATION, 
+    UNKNOWN
+};
+
 class Stock {
 public:
     // Constructor
-    Stock(const string& name, double price, int volatility, int mean);
+    Stock(const string& name, double price, int volatility, Sector sector);
     
     // Getter and Setter for stock name
     string get_name() const;
@@ -27,6 +40,10 @@ public:
     int get_mean() const;
     void set_mean(int mean); 
 
+    // Getter and Setter for sector
+    Sector get_sector() const;
+    void set_sector(Sector sector);
+
     // Method to update stock price
     void update_price(double price); 
 
@@ -35,7 +52,8 @@ public:
         return m_name == other.m_name &&
                m_price == other.m_price &&
                m_volatility == other.m_volatility &&
-               m_mean == other.m_mean;
+               m_mean == other.m_mean &&
+               m_sector == other.m_sector;
     }
 
 private:
@@ -43,6 +61,7 @@ private:
     double m_price;
     int m_volatility;
     int m_mean;
+    Sector m_sector;
 };
 
 // Hash function for Stock
@@ -54,7 +73,8 @@ namespace std {
             size_t price_hash = hash<double>()(stock.get_price());
             size_t volatility_hash = hash<int>()(stock.get_volatility());
             size_t mean_hash = hash<int>()(stock.get_mean());
-            return name_hash ^ (price_hash << 1) ^ (volatility_hash << 2) ^ (mean_hash << 3);
+            size_t sector_hash = hash<int>()(static_cast<int>(stock.get_sector()));
+            return name_hash ^ (price_hash << 1) ^ (volatility_hash << 2) ^ (mean_hash << 3) ^ (sector_hash << 4);
         }
     };
 }
