@@ -20,7 +20,7 @@ void Game::start() {
 void Game::load() {
     ifstream file("news.txt");
     if (!file.is_open()){
-        cerr << "Failed to open data.txt" << std::endl;
+        cerr << "Failed to open news.txt" << std::endl;
         return;
     }
 
