@@ -9,13 +9,13 @@
 class Portfolio {
 public:
     // Constructor
-    Portfolio(double starting_balance = 0.0);
+    Portfolio(double starting_balance = 1000.0);
 
     // Get and set for cash 
     double get_cash();
     void set_cash(double amount);
 
-    // Methods for bank balance
+    // Methods for bank balanced
     double get_bank_balance();
     void deposit_in_bank(double amount);
     void withdraw_from_bank(double amount); 

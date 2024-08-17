@@ -26,6 +26,7 @@ double Portfolio::get_bank_balance() {
 void Portfolio::deposit_in_bank(double amount) {
     if (amount <= 0){
         cerr << "Error: Invalid amount" << endl;
+        return; 
     }
 
     if (m_cash - amount >= 0){
@@ -41,6 +42,7 @@ void Portfolio::deposit_in_bank(double amount) {
 void Portfolio::withdraw_from_bank(double amount){
     if (amount <= 0){
         cerr << "Error: Invalid amount" << endl;
+        return; 
     }
 
     if (m_bank_balance - amount >= 0){
@@ -55,7 +57,7 @@ void Portfolio::withdraw_from_bank(double amount){
 // Method to get the value of a specific stock
 double Portfolio::get_stock_value(const Stock& stock) {
     if (m_stocks.find(stock) != m_stocks.end()) {
-        return stock.get_price(); 
+        return stock.get_price() * get_number_of_shares(stock); 
     } 
     else {
         return 0.0; 
@@ -85,25 +87,20 @@ int Portfolio::get_number_of_shares(const Stock& stock) {
 
 // Method to invest in a stock
 void Portfolio::invest_in_stock(const Stock& stock, int shares) {
-    if (shares <= 0) {
-        cerr << "Error: Number of shares must be positive." << endl;
-        return;
+    if (m_cash - stock.get_price() * shares >= 0) {
+        m_cash = m_cash - stock.get_price() * shares; 
+        m_stocks[stock] += shares;
     }
-    m_stocks[stock] += shares;
 }
 
 // Sell your stocks
 void Portfolio::sell_stock(const Stock& stock, double shares){
     if (shares <= 0){
-        cerr << "Error: Invalid amount" << endl;
+        return; 
     }
 
-    if (m_stocks.find(stock) == m_stocks.end()) {
-        cerr << "Error: Stock does not exist"; 
-    } 
-
     if (m_stocks[stock] - shares >= 0){
-        m_stocks[stock] -= shares; 
+        m_stocks[stock] = m_stocks[stock] - shares; 
         m_cash += shares * stock.get_price();
     }
 }
