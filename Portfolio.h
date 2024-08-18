@@ -29,8 +29,20 @@ public:
     void invest_in_stock(const Stock& stock, int shares);
     void sell_stock(const Stock& stock, double shares);
 
+    // Helper function
+    void update_stocks(const vector<Stock>& stocks) {
+        for (const auto& stock : stocks) {
+            // Check if the stock exists in the portfolio
+            auto it = m_stocks.find(stock);
+            if (it != m_stocks.end()) {
+                // Update the price of the stock in the portfolio
+                const_cast<Stock&>(it->first).set_price(stock.get_price());
+                const_cast<Stock&>(it->first).set_mean(stock.get_mean());
+            }
+        }
+    }
+
 private:
-    int debt; 
     double m_cash; 
     double m_bank_balance; 
     unordered_map <Stock, int> m_stocks; // Stock and number of shares

@@ -2,11 +2,11 @@
 #include "Stock.h"
 
 // Constructor
-Stock::Stock(const string& name, double price, int volatility, Sector sector) {
+Stock::Stock(const string& name, double price, int volatility, int mean, Sector sector) {
     m_name = name; 
     m_price = price; 
     m_volatility = volatility; 
-    m_mean = 0; 
+    m_mean = mean; 
     m_sector = sector; 
 }
 

@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include <vector>
-#include <iostream>
 #include "Stock.h"
 #include <fstream>
 #include <sstream>
@@ -28,8 +27,12 @@ const string WHITE = "\033[37m";
 const string BOLD = "\033[1m";
 const string ORANGE = "\033[38;5;208m";
 const string PURPLE = "\033[38;5;129m"; 
+const string BLACK = "\033[38;5;235m"; 
 
+const string BG_WHITE = "\033[47m";   
 const string BG_YELLOW = "\033[48;5;237m"; 
+
+const int NUM_NEWS = 3; 
 
 class Game {
 public:
@@ -56,6 +59,8 @@ public:
     void update();
     void read_news();
     void next_year();
+    void draw_clock();
+    void bank(); 
 
     // Helper functions
     Sector string_to_sector(const string& sector) {
@@ -86,7 +91,7 @@ public:
 
     void display_header() {
         // Display header
-        cout << MAGENTA << string(134, '-') << endl;
+        cout << MAGENTA << string(136, '-') << endl;
         cout << RED << "[Year: >> " << RESET << m_year << RED << " <<]" << RESET << string (9, ' ');
         cout << YELLOW << "[Your Portfolio Value: " << RESET << "$" << fixed << setprecision(2) << m_portfolio.get_total_value() + m_portfolio.get_bank_balance() + m_portfolio.get_cash() << YELLOW << "]";
         cout << GREEN << "[CASH~" << RESET << "$" << fixed << setprecision(2) << m_portfolio.get_cash() << GREEN << "]";
@@ -94,7 +99,7 @@ public:
         cout << BLUE << "[BANK~" << RESET  << "$" << fixed << setprecision(2) << m_portfolio.get_bank_balance() << BLUE << "]"; 
         cout << CYAN << string (9, ' ');
         cout << CYAN << "[Index Fund Value: " << RESET << "$" << m_index_fund_value << CYAN << "]" << RESET << endl;
-        cout << MAGENTA << string(134, '-') << endl;
+        cout << MAGENTA << string(136, '-') << endl;
     }
 
     void display_return(){
@@ -120,8 +125,6 @@ public:
             }
         }
     }
-    
-    void draw_clock();
 private:
     int m_year;
     double m_index_fund_value;

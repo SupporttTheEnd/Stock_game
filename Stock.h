@@ -2,6 +2,7 @@
 #define STOCK_H
 
 #include <string>
+#include <iostream>
 #include <functional> // For std::hash
 
 using namespace std;
@@ -22,7 +23,7 @@ enum Sector {
 class Stock {
 public:
     // Constructor
-    Stock(const string& name, double price, int volatility, Sector sector);
+    Stock(const string& name, double price, int volatility, int mean, Sector sector);
     
     // Getter and Setter for stock name
     string get_name() const;
@@ -49,11 +50,7 @@ public:
 
     // Overloaded equality operator
     bool operator==(const Stock& other) const {
-        return m_name == other.m_name &&
-               m_price == other.m_price &&
-               m_volatility == other.m_volatility &&
-               m_mean == other.m_mean &&
-               m_sector == other.m_sector;
+        return m_name == other.m_name && m_sector == other.m_sector;
     }
 
 private:
@@ -70,11 +67,8 @@ namespace std {
     struct hash<Stock> {
         size_t operator()(const Stock& stock) const {
             size_t name_hash = hash<string>()(stock.get_name());
-            size_t price_hash = hash<double>()(stock.get_price());
-            size_t volatility_hash = hash<int>()(stock.get_volatility());
-            size_t mean_hash = hash<int>()(stock.get_mean());
             size_t sector_hash = hash<int>()(static_cast<int>(stock.get_sector()));
-            return name_hash ^ (price_hash << 1) ^ (volatility_hash << 2) ^ (mean_hash << 3) ^ (sector_hash << 4);
+            return name_hash ^ (sector_hash << 1);
         }
     };
 }

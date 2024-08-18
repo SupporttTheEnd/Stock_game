@@ -69,7 +69,7 @@ double Portfolio::get_total_value() {
     double total = 0.0; 
 
     for(const auto& pair : m_stocks){
-        total += pair.second * pair.first.get_price();
+        total += get_stock_value(pair.first);
     }
 
     return total; 

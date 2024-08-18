@@ -3,7 +3,7 @@
 // Constructor
 Game::Game() {
     // Initialize member variables
-    m_year = 2000;
+    m_year = 2020;
     m_index_fund_value = 1000;
 }
 
@@ -30,26 +30,25 @@ void Game::load() {
         m_impact.push_back(stoi(impact));
     }
 
-    m_stocks.push_back(Stock("Apple Inc.", 175.0, 20, Sector::TECH));
-    m_stocks.push_back(Stock("Pfizer Inc.", 43.0, 15, Sector::HEALTH));
-    m_stocks.push_back(Stock("JPMorgan Chase & Co.", 155.0, 18, Sector::FINANCE));
-    m_stocks.push_back(Stock("Exxon Mobil Corporation", 110.0, 22, Sector::ENERGY));
-    m_stocks.push_back(Stock("Procter & Gamble Co.", 145.0, 10, Sector::CONSUMER));
-    m_stocks.push_back(Stock("Caterpillar Inc.", 290.0, 25, Sector::INDUSTRIALS));
-    m_stocks.push_back(Stock("Duke Energy Corporation", 97.0, 12, Sector::UTILITIES));
-    m_stocks.push_back(Stock("Simon Property Group", 120.0, 17, Sector::REAL_ESTATE));
-    m_stocks.push_back(Stock("Verizon Communications Inc.", 38.0, 19, Sector::COMMUNICATION));
+    m_stocks.push_back(Stock("Apple Inc.", 175.0, 12, 4, Sector::TECH));
+    m_stocks.push_back(Stock("Pfizer Inc.", 43.0, 3, 3, Sector::HEALTH));
+    m_stocks.push_back(Stock("JPMorgan Chase & Co.", 155.0, 6, -2, Sector::FINANCE));
+    m_stocks.push_back(Stock("Exxon Mobil Corporation", 110.0, 11, -4, Sector::ENERGY));
+    m_stocks.push_back(Stock("Procter & Gamble Co.", 145.0, 5, -7, Sector::CONSUMER));
+    m_stocks.push_back(Stock("Caterpillar Inc.", 290.0, 12, 3, Sector::INDUSTRIALS));
+    m_stocks.push_back(Stock("Duke Energy Corporation", 97.0, 6, -3, Sector::UTILITIES));
+    m_stocks.push_back(Stock("Simon Property Group", 120.0, 17, -1, Sector::REAL_ESTATE));
+    m_stocks.push_back(Stock("Verizon Communications Inc.", 38.0, 9, 3, Sector::COMMUNICATION));
 }
 
 // Function to display the menu with highlighting
 void Game::menu() {
-    vector<string> options = {"View Stocks/Portfolio", "Read News", "Next Year", "Exit"};
+    vector<string> options = {"View Stocks/Portfolio", "Bank", "Read News", "Next Year", "Exit"};
     int selected_option = 0;
     char key;
 
     while (true) {
         system("cls"); // Clear screen
-
         display_header();
 
         // Print top border
@@ -67,19 +66,18 @@ void Game::menu() {
         cout << string (20, ' ') << CYAN << "+" << string (86, '-') << "+" << RESET << endl;
 
         // Print menu options
-        cout << string (20, ' ') << CYAN << "|" << string(10 , ' ') << RESET;
-        for (int i = 0; i < options.size(); ++i) {
+        cout << string (20, ' ') << CYAN << "|" << string(6 , ' ') << RESET;
+        for (int i = 0; i < int(options.size()); ++i) {
             if (i == selected_option) {
-                cout << BOLD << GREEN << " > " << options[i] << RESET;
+                cout << BOLD << GREEN << "> " << options[i] << RESET;
             } else {
-                cout << "   " << options[i];
+                cout << "  " << options[i];
             }
-            if (i < options.size() - 1) {
-                cout << " | ";
+            if (i < int(options.size()) - 1) {
+                cout << "  | ";
             }
         }
-
-        cout << string(12 , ' ') << CYAN << "|" << RESET << endl;
+        cout << string(7 , ' ') << CYAN <<  "|" << RESET << endl;
 
         cout << string (20, ' ') << CYAN << "+" << string (86, '-') << "+" << RESET << endl;
 
@@ -99,12 +97,15 @@ void Game::menu() {
                     display_stocks();
                     break;
                 case 1:
-                    read_news();
+                    bank();
                     break;
                 case 2:
-                    update();
+                    read_news();
                     break;
                 case 3:
+                    update();
+                    break;
+                case 4:
                     cout << "Exiting..." << endl;
                     return; // Exit the menu loop
 
@@ -123,6 +124,19 @@ void Game::display_stocks() {
     while (true) {
         system("cls"); // Clear screen
         display_header();
+
+        // Print top border
+        cout << string (6, ' ') << CYAN << "+" << string (124, '-') << "+" << RESET << endl;
+
+        cout << string(6, ' ') << CYAN << "|" << RESET
+        << string(1, ' ') << CYAN
+        << "Select an Option [Use " << GREEN << "'W'" << CYAN
+        << " and " << GREEN << "'S'" << CYAN
+        << " keys to navigate | Press " << GREEN << "'Q'" << CYAN
+        << " to toggle buy/sell | Number keys to indicate stocks amount]" << RESET
+        << string(1, ' ') << CYAN << "|" << RESET << endl;
+
+        cout << string(6, ' ') << CYAN << "+" << string(124, '-') << "+" << RESET << endl;
 
         // Display stocks in a table format
         cout << adjustment << GREEN << string(50, '=') << "[";
@@ -157,7 +171,7 @@ void Game::display_stocks() {
         cout << GREEN << " |$|" << RESET << endl;
 
         // Display each stock with highlighting for the selected stock
-        for (int i = 0; i < m_stocks.size(); ++i) {
+        for (int i = 0; i < int(m_stocks.size()); ++i) {
             const auto& stock = m_stocks[i];
             string name = stock.get_name();
             string mean_growth = "";
@@ -166,7 +180,6 @@ void Game::display_stocks() {
             // Determine color based on mean growth
             string growth_color;
             if (stock.get_mean() < 0) {
-                mean_growth = "-" + mean_growth;
                 growth_color = RED;
             } else {
                 mean_growth = "+" + mean_growth;
@@ -185,8 +198,8 @@ void Game::display_stocks() {
                 << "$" << fixed << setprecision(2) << stock.get_price() << string(16 - to_string(stock.get_price()).length(), ' ') << "| "
                 << growth_color << mean_growth
                 << fixed << setprecision(2) << stock.get_mean() << " ("
-                << fixed << setprecision(2) << stock.get_mean() / stock.get_price() - stock.get_mean() << "%)" << WHITE
-                << string(16 - mean_growth.length() - to_string(stock.get_mean()).length() - to_string(stock.get_mean() / stock.get_price() - stock.get_mean()).length(), ' ') << "| "
+                << fixed << setprecision(2) << (stock.get_mean() * 100) / (stock.get_price() - stock.get_mean()) << "%)" << WHITE
+                << string(16 - mean_growth.length() - to_string(stock.get_mean()).length() - to_string((stock.get_mean() * 100) / (stock.get_price() - stock.get_mean())).length(), ' ') << "| "
                 << RED << "NUM: " << WHITE << m_portfolio.get_number_of_shares(stock) << RED << " VAL: " << WHITE << m_portfolio.get_stock_value(stock) << WHITE
                 << string(19 - to_string(m_portfolio.get_number_of_shares(stock)).length() - to_string(m_portfolio.get_stock_value(stock)).length(), ' ') << "| "
                 << sector << WHITE << string(16 - sector.length(), ' ');
@@ -228,7 +241,47 @@ void Game::display_stocks() {
 
 void Game::update() {
     draw_clock();
+    m_curr_news.clear(); 
     update_news(); 
+    m_year++; 
+
+    double total_growth = 0.0;
+    double total_value = 0.0; 
+    for (int i = 0; i < int(m_stocks.size()); i++) {
+        Stock& stock = m_stocks[i];
+
+        total_value += stock.get_price();
+
+        // Calculate the volatility effect
+        double volatility_effect = ((rand() % 2001 - 950) / 1000.0) * stock.get_volatility(); 
+        
+        // Update the stock's value
+        double new_value = stock.get_price() + stock.get_mean() + volatility_effect;
+        
+        // Update based on the news story
+        auto it = find(m_curr_news.begin(), m_curr_news.end(), i);
+
+        if(it != m_curr_news.end()){
+            new_value += m_impact[*it];
+        }
+
+        stock.set_price(new_value);
+        
+        stock.set_mean(stock.get_mean() + volatility_effect);
+
+        // Sum the mean for average growth calculation
+        total_growth += stock.get_mean();
+    }
+    
+    // Calculate the average growth
+    double average_growth = total_growth / total_value;
+
+    // Update the index fund value
+    m_index_fund_value += m_index_fund_value * average_growth;
+    m_index_fund_value += m_index_fund_value * 0.02;
+
+    // Pass the updated stocks to the portfolio
+    m_portfolio.update_stocks(m_stocks);
 }
 
 void Game::read_news() {
@@ -244,18 +297,18 @@ void Game::read_news() {
     cout << adjustment << BLUE << "                                    |___/                           \n" << RESET;
 
     // Print top border of the news box
-    cout << CYAN << string(130, '-') << RESET << endl;
+    cout << CYAN << "+" << string(133, '-') << "+" << RESET << endl;
 
     // Print title
-    cout << CYAN << "| " << BOLD << WHITE << "  Latest News  " << RESET << CYAN << " |" << string(110, ' ') << "|" << RESET << endl;
-    cout << CYAN << string(130, '-') << RESET << endl;
+    cout << CYAN << "| " << BOLD << WHITE << "  Latest News  " << RESET << CYAN << " |" << string(115, ' ') << "|" << RESET << endl;
+    cout << CYAN << string(135, '-') << RESET << endl;
 
     // Print news items inside the box
     for (int index : m_curr_news) {
         // Print news item with sector impact
-        cout << CYAN << "| " << RESET
-             << ORANGE << "- " << m_news[index] << RESET
-             << string(90 - m_news[index].length(), ' ') << "| "
+        cout << CYAN << "| * " 
+             << WHITE << m_news[index]
+             << string(95 - m_news[index].length(), ' ') << RESET << "| "
              << GREEN << "Sector Impacted: " << RESET 
              << sector_to_string(m_sector[index]) 
              << string(15 - sector_to_string(m_sector[index]).length(), ' ') 
@@ -263,7 +316,7 @@ void Game::read_news() {
     }
 
     // Print bottom border of the box
-    cout << CYAN << string(130, '-') << RESET << endl;
+    cout << CYAN << "+" << string(133, '-') << "+" << RESET << endl;
 
     // Print prompt to return
     display_return();
@@ -276,6 +329,9 @@ void Game::read_news() {
 }
 
 void Game::draw_clock() {
+    string adjustment_title = string(30, ' ');
+    string adjustment = string(60, ' ');
+
     tm time_info = {};
     time_info.tm_hour = 23;
     time_info.tm_min = 59;
@@ -286,15 +342,10 @@ void Game::draw_clock() {
 
     while (true) {
         system("cls");
-        cout << RED << " _    _                           _   _                __     __             \n";
-        cout << ORANGE << "| |  | |                         | \\ | |               \\ \\   / /             \n";
-        cout << YELLOW << "| |__| | __ _ _ __  _ __  _   _  |  \\| | _____      __  \\ \\_/ /__  __ _ _ __ \n";
-        cout << GREEN << "|  __  |/ _` | '_ \\| '_ \\| | | | | . ` |/ _ \\ \\ /\\ / /   \\   / _ \\/ _` | '__|\n";
-        cout << CYAN<< "| |  | | (_| | |_) | |_) | |_| | | |\\  |  __/\\ V  V /     | |  __/ (_| | |   \n";
-        cout << BLUE << "|_|  |_|\\__,_| .__/| .__/ \\__, | |_| \\_|\\___| \\_/\\_/      |_|\\___|\\__,_|_|   \n";
-        cout << MAGENTA << "             | |   | |     __/ |                                              \n";
-        cout << WHITE << "             |_|   |_|    |___/                                              \n";
-        cout << RESET; 
+        display_header();
+
+        cout << "\n" << endl; 
+
         // Update the tm structure to the current time
         time_info.tm_sec++;
         if (time_info.tm_sec >= 60) {
@@ -325,22 +376,39 @@ void Game::draw_clock() {
         // Exit if we have transitioned to the next year
         if (local_time->tm_year > m_year - 1900) {
             // Display the current date and time
-            cout << "Calendar Animation" << endl;
-            cout << "-------------------" << endl;
-            cout << BOLD << YELLOW << "Date: " << put_time(local_time, "%Y-%m-%d") << endl;
-            cout << "Time: " << put_time(local_time, "%H:%M:%S") << RESET << endl;
+            cout << adjustment << CYAN << "+-------------------+" << RESET << endl;
+            cout << adjustment << CYAN << "|" << BOLD << YELLOW << "Date: " << put_time(local_time, "%Y-%m-%d")  << CYAN << "   |"<< RESET << endl;
+            cout << adjustment << CYAN << "|" << BOLD << YELLOW << "Time: " << put_time(local_time, "%H:%M:%S") << CYAN << "     |" << RESET << endl;
+            cout << adjustment << CYAN << "+-------------------+" << RESET << endl;
 
+            this_thread::sleep_for(chrono::seconds(1));
+
+            system("cls");
+            display_header();
+            cout << adjustment_title << RED << " _    _                           _   _                __     __             \n";
+            cout << adjustment_title << ORANGE << "| |  | |                         | \\ | |               \\ \\   / /             \n";
+            cout << adjustment_title << YELLOW << "| |__| | __ _ _ __  _ __  _   _  |  \\| | _____      __  \\ \\_/ /__  __ _ _ __ \n";
+            cout << adjustment_title << GREEN << "|  __  |/ _` | '_ \\| '_ \\| | | | | . ` |/ _ \\ \\ /\\ / /   \\   / _ \\/ _` | '__|\n";
+            cout << adjustment_title << CYAN<< "| |  | | (_| | |_) | |_) | |_| | | |\\  |  __/\\ V  V /     | |  __/ (_| | |   \n";
+            cout << adjustment_title << BLUE << "|_|  |_|\\__,_| .__/| .__/ \\__, | |_| \\_|\\___| \\_/\\_/      |_|\\___|\\__,_|_|   \n";
+            cout << adjustment_title << MAGENTA << "             | |   | |     __/ |                                              \n";
+            cout << adjustment_title << PURPLE << "             |_|   |_|    |___/                                              \n";
+            cout << RESET; 
             this_thread::sleep_for(chrono::seconds(2));
             return; 
         } 
 
         // Display the current date and time
-        cout << "Calendar Animation" << endl;
-        cout << "-------------------" << endl;
-        cout << "Date: " << put_time(local_time, "%Y-%m-%d") << endl;
-        cout << "Time: " << put_time(local_time, "%H:%M:%S") << endl;
+        cout << adjustment << CYAN << "+-------------------+" << RESET << endl;
+        cout << adjustment << CYAN << "|" << RESET<< "Date: " << put_time(local_time, "%Y-%m-%d") << CYAN << "   |" << RESET << endl;
+        cout << adjustment << CYAN << "|" << RESET<< "Time: " << put_time(local_time, "%H:%M:%S") << CYAN << "     |" << RESET << endl;
+        cout << adjustment << CYAN << "+-------------------+" << RESET << endl;
     
         // Wait for 1 second
         this_thread::sleep_for(chrono::seconds(1));
     }
+}
+
+void Game::bank(){
+    
 }
