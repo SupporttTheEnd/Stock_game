@@ -23,35 +23,35 @@ double Portfolio::get_bank_balance() {
 }
 
 // Desposit money into bank account
-void Portfolio::deposit_in_bank(double amount) {
+bool Portfolio::deposit_in_bank(double amount) {
     if (amount <= 0){
-        cerr << "Error: Invalid amount" << endl;
-        return; 
+        return false; 
     }
 
     if (m_cash - amount >= 0){
         m_cash -= amount; 
         m_bank_balance += amount;
+
+        return true;
     }
-    else {
-        cerr << "Error: Insufficient funds" << endl;
-    }
+    
+    return false; 
 }
 
 // Withdraw
-void Portfolio::withdraw_from_bank(double amount){
+bool Portfolio::withdraw_from_bank(double amount){
     if (amount <= 0){
-        cerr << "Error: Invalid amount" << endl;
-        return; 
+        return false; 
     }
 
     if (m_bank_balance - amount >= 0){
         m_bank_balance -= amount; 
         m_cash += amount;
+        
+        return true; 
     }
-    else {
-        cerr << "Error: Insufficient funds" << endl;
-    }
+    
+    return false; 
 }
 
 // Method to get the value of a specific stock

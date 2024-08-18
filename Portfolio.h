@@ -17,8 +17,8 @@ public:
 
     // Methods for bank balanced
     double get_bank_balance();
-    void deposit_in_bank(double amount);
-    void withdraw_from_bank(double amount); 
+    bool deposit_in_bank(double amount);
+    bool withdraw_from_bank(double amount); 
 
     // Methods to get portfolio values
     double get_stock_value(const Stock& stock);

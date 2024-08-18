@@ -31,6 +31,7 @@ const string BLACK = "\033[38;5;235m";
 
 const string BG_WHITE = "\033[47m";   
 const string BG_YELLOW = "\033[48;5;237m"; 
+const string BEIGE_LIGHT = "\033[38;5;230m";
 
 const int NUM_NEWS = 3; 
 
@@ -52,6 +53,7 @@ public:
     void set_portfolio(const Portfolio& portfolio) { m_portfolio = portfolio; }
 
     // Function declarations
+    void start_screen(); 
     void start();
     void load();
     void menu();
@@ -61,6 +63,8 @@ public:
     void next_year();
     void draw_clock();
     void bank(); 
+    void deposit(); 
+    void withdraw(); 
 
     // Helper functions
     Sector string_to_sector(const string& sector) {
@@ -108,9 +112,9 @@ public:
 
         // Print the prompt with side borders
         cout << CYAN << string(40, ' ') << "|" << RESET 
-            << string(8, ' ') << CYAN 
-            << BOLD << "Press " << GREEN << "\'ENTER\'" << CYAN << BOLD << "to return to the menu ..." << RESET 
-            << string(7, ' ') << CYAN << "|" << RESET << endl;
+            << string(7, ' ') << CYAN 
+            << BOLD << "Press " << GREEN << "\'ESCAPE\'" << CYAN << BOLD << " to return to the menu ..." << RESET 
+            << string(6, ' ') << CYAN << "|" << RESET << endl;
 
         // Print bottom border
         cout << CYAN << string(40, ' ') << "+" << string (53, '-') << "+" << RESET << endl;

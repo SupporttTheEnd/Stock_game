@@ -7,9 +7,36 @@ Game::Game() {
     m_index_fund_value = 1000;
 }
 
+void Game:: start_screen(){
+    const int center = 50;  // Width of the terminal for alignment
+    const int animationDelay = 100;  // Delay in milliseconds for animation speed
+
+    // moving text 
+    for (int i = 20; i < center; i++) {
+        system("cls"); 
+        string adjustment(i, ' ');
+        string reverse_adjustment(100 - i, ' ');
+        cout << adjustment << RED << " ___                     _                        _   " << RESET << endl;
+        cout << adjustment << RED << "|_ _|_ ____   _____  ___| |_ _ __ ___   ___ _ __ | |_ " << RESET << endl;
+        cout << adjustment << YELLOW << " | || '_ \\ \\ / / _ \\/ __| __| '_ ` _ \\ / _ \\ '_ \\| __|" << RESET << endl;
+        cout << adjustment << YELLOW << " | || | | \\ V /  __/\\__ \\ |_| | | | | |  __/ | | | |_ " << RESET << endl;
+        cout << adjustment << BLUE << "|___|_|_|_|\\_/ \\___||___/\\__|_| |_| |_|\\___|_| |_|\\__|" << RESET << endl;
+
+        cout << reverse_adjustment << BLUE << "/ ___|(_)_ __ ___  _   _| | __ _| |_ ___  _ __        " << RESET << endl;
+        cout << reverse_adjustment << GREEN << "\\___ \\| | '_ ` _ \\| | | | |/ _` | __/ _ \\| '__|       " << RESET << endl;
+        cout << reverse_adjustment << GREEN << " ___) | | | | | | | |_| | | (_| | || (_) | |          " << RESET << endl;
+        cout << reverse_adjustment << RED << "|____/|_|_| |_| |_\\__,_|_|\\__,_|\\__\\___/|_|          " << RESET << endl;
+
+        this_thread::sleep_for(chrono::milliseconds(animationDelay));
+    }
+    cout << endl; 
+    cout << BOLD << string(60, ' ') << "By Andrew Tang" << endl; 
+    this_thread::sleep_for(chrono::seconds(3));
+}
+
 // Method to start the game
 void Game::start() {
-    cout << "Welcome to Stock Game Player" << endl;
+    start_screen(); 
     load(); 
     update_news(); 
     menu(); 
@@ -18,7 +45,7 @@ void Game::start() {
 void Game::load() {
     ifstream file("news.txt");
     if (!file.is_open()){
-        cerr << "Failed to open news.txt" << std::endl;
+        cerr << "Failed to open news.txt" << endl;
         return;
     }
 
@@ -233,7 +260,7 @@ void Game::display_stocks() {
             } else {
                 m_portfolio.invest_in_stock(m_stocks[selected_index], quantity);
             }
-        } else if (key == 13) { // ESC key to exit
+        } else if (key == 27) { // ESC key to exit
             return;
         }
     }
@@ -325,7 +352,7 @@ void Game::read_news() {
     char key;
     do {
         key = getch();
-    } while (key != 13);
+    } while (key != 27);
 }
 
 void Game::draw_clock() {
@@ -409,6 +436,171 @@ void Game::draw_clock() {
     }
 }
 
-void Game::bank(){
-    
+void Game::deposit() {
+    string adjustment = string(35, ' ');
+
+    system("cls");
+    display_header();
+
+    // Print top border
+    cout << string (38, ' ') << CYAN << "+" << string (50, '-') << "+" << RESET << endl;
+
+    cout << string (38, ' ') << CYAN << "|" << RESET
+        << string(4 , ' ') << CYAN
+        << "Type an amount [ Press " << GREEN << "'ENTER'" << CYAN
+        << " to select]" << RESET
+        << string(5 , ' ') << CYAN << "|" << RESET << endl;
+
+    cout << string (38, ' ') << CYAN << "+" << string (50, '-') << "+" << RESET << endl;
+
+    double amount;
+    cout << BOLD << BEIGE_LIGHT;
+    cout << adjustment << "+----------------------------------------------+" << endl;
+    cout << adjustment << "|                Deposit Amount                |" << endl;
+    cout << adjustment << "+----------------------------------------------+" << RESET << endl;
+    cout << adjustment << BOLD << BEIGE_LIGHT << " Enter amount to deposit: $";
+    cout << RESET;
+    cin >> amount;
+
+    if (cin.fail()) {
+        cin.clear(); // Clear error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+        cout << RED;
+        cout << adjustment << "+----------------------------------------------+" << endl;
+        cout << adjustment << "|              Invalid Amount                  |" << endl;
+        cout << adjustment << "+----------------------------------------------+" << RESET << endl;
+        this_thread::sleep_for(chrono::seconds(2));
+        return; 
+    }
+
+    if (!m_portfolio.deposit_in_bank(amount)) {
+        // Error Message Box
+        cout << RED;
+        cout << adjustment << "+----------------------------------------------+" << endl;
+        cout << adjustment << "|              Invalid Amount                  |" << endl;
+        cout << adjustment << "+----------------------------------------------+" << RESET << endl;
+    } else {
+        // Success Message Box
+        cout << GREEN;
+        cout << adjustment << "+----------------------------------------------+" << endl;
+        cout << adjustment << "| Successfully Deposited: $" << fixed << setprecision(2) << amount << string(23 - to_string(amount).length(), ' ') << " |" << endl;
+        cout << adjustment << "+----------------------------------------------+" << RESET << endl;
+    }
+    this_thread::sleep_for(chrono::seconds(2));
+}
+
+void Game::withdraw() {
+    string adjustment = string(40, ' ');
+
+    system("cls");
+    display_header();
+
+    // Print top border
+    cout << string (38, ' ') << CYAN << "+" << string (50, '-') << "+" << RESET << endl;
+
+    cout << string (38, ' ') << CYAN << "|" << RESET
+        << string(4 , ' ') << CYAN
+        << "Type an amount [ Press " << GREEN << "'ENTER'" << CYAN
+        << " to select]" << RESET
+        << string(5 , ' ') << CYAN << "|" << RESET << endl;
+
+    cout << string (38, ' ') << CYAN << "+" << string (50, '-') << "+" << RESET << endl;
+
+    double amount;
+    cout << BOLD << BEIGE_LIGHT;
+    cout << adjustment << "+----------------------------------------------+" << endl;
+    cout << adjustment << "|                Withdraw Amount               |" << endl;
+    cout << adjustment << "+----------------------------------------------+" << RESET << endl;
+    cout << adjustment << BOLD << BEIGE_LIGHT << " Enter amount to withdraw: $";
+    cout << RESET;
+    cin >> amount;
+
+    while (cin.fail()) {
+        cin.clear(); // Clear error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+        cout << RED;
+        cout << adjustment << "+----------------------------------------------+" << endl;
+        cout << adjustment << "|              Invalid Amount                  |" << endl;
+        cout << adjustment << "+----------------------------------------------+" << RESET << endl;
+        this_thread::sleep_for(chrono::seconds(2));
+        return; 
+    }
+
+    if (!m_portfolio.withdraw_from_bank(amount)) {
+        // Error Message Box
+        cout << RED;
+        cout << adjustment << "+----------------------------------------------+" << endl;
+        cout << adjustment << "|              Invalid Amount                  |" << endl;
+        cout << adjustment << "+----------------------------------------------+" << RESET << endl;
+    } else {
+        // Success Message Box
+        cout << GREEN;
+        cout << adjustment << "+----------------------------------------------+" << endl;
+        cout << adjustment << "| Successfully Withdrew: $" << fixed << setprecision(2) << amount  << string(23 - to_string(amount).length(), ' ') << " |" << endl;
+        cout << adjustment << "+----------------------------------------------+" << RESET << endl;
+    }
+    this_thread::sleep_for(chrono::seconds(2));
+}
+
+void Game::bank() {
+    int selected_index = 0;
+    string adjustment = string(35, ' ');
+    while (true) {
+        system("cls");
+        display_header();
+
+        // Print top border
+        cout << string (24, ' ') << CYAN << "+" << string (86, '-') << "+" << RESET << endl;
+
+        cout << string (24, ' ') << CYAN << "|" << RESET
+            << string(4 , ' ') << CYAN
+            << "Select an Option [Use " << GREEN << "'W'" << CYAN
+            << " and " << GREEN << "'S'" << CYAN
+            << " keys to navigate | Press " << GREEN << "'ENTER'" << CYAN
+            << " to select]" << RESET
+            << string(5 , ' ') << CYAN << "|" << RESET << endl;
+
+        cout << string (24, ' ') << CYAN << "+" << string (86, '-') << "+" << RESET << endl;
+
+        cout << adjustment << BOLD << BEIGE_LIGHT << "    ________________________________________________________" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "    |_______________________________________________________|" << endl;
+
+        if(selected_index == 0){
+            cout << adjustment << BOLD << BEIGE_LIGHT << "      || "<< BOLD << GREEN << ">  Deposit" << BOLD << CYAN << "                            ||" << BOLD << BEIGE_LIGHT << "        ||" << endl;
+            cout << adjustment << BOLD << BEIGE_LIGHT << "      ||    Withdraw                           " << BOLD << CYAN << "\\/" << BOLD << BEIGE_LIGHT << "        ||" << endl;
+        }
+        else{
+            cout << adjustment << BOLD << BEIGE_LIGHT << "      ||    Deposit                            " << BOLD << RED << "/\\" << BOLD << BEIGE_LIGHT <<"        ||" << endl;
+            cout << adjustment << BOLD << BEIGE_LIGHT << "      || "<< BOLD << GREEN << ">  Withdraw" << BOLD << BEIGE_LIGHT << "                           " << BOLD << RED << "||" << BOLD << BEIGE_LIGHT << "        ||" << endl;
+        }
+
+        cout << adjustment << BOLD << BEIGE_LIGHT << "      ||_________________________________________________||" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "      || ||/     \\||/     \\||/     \\||/     \\||/     \\|| ||" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "      || ||       ||       ||       ||       ||       || ||" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "      || ||       ||       ||       ||       ||       || ||" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "      || ||       ||       ||       ||       ||       || ||" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "      || ||       ||       ||       ||       ||       || ||" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "      || ||       ||       ||       ||       ||       || ||" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "      || ||       ||       ||       ||       ||       || ||" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "     _|| ||\\_____/||\\_____/||\\_____/||\\_____/||\\______|| ||_" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "    |_______________________________________________________|" << endl;
+        cout << adjustment << BOLD << BEIGE_LIGHT << "  |___________________________________________________________|" << endl;
+        
+        display_return();
+
+        char key = _getch();
+        if (key == 'w' || key == 'W' || key == 's' || key == 'S') { 
+            selected_index = (selected_index - 1) % 2;
+        } 
+        else if (key == 13) {
+            if (selected_index == 0) {
+                deposit();
+            } else {
+                withdraw();
+            }
+        } 
+        else if (key == 27) { // ESC key to exit
+            return;
+        }
+    }
 }
