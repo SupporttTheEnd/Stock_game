@@ -226,7 +226,7 @@ void Game::display_stocks() {
                 << growth_color << mean_growth
                 << fixed << setprecision(2) << stock.get_mean() << " ("
                 << fixed << setprecision(2) << (stock.get_mean() * 100) / (stock.get_price() - stock.get_mean()) << "%)" << WHITE
-                << string(16 - mean_growth.length() - to_string(stock.get_mean()).length() - to_string((stock.get_mean() * 100) / (stock.get_price() - stock.get_mean())).length(), ' ') << "| "
+                << string(20 - mean_growth.length() - to_string(float(stock.get_mean())).length() - to_string(float((stock.get_mean() * 100) / (stock.get_price() - stock.get_mean()))).length(), ' ') << "| "
                 << RED << "NUM: " << WHITE << m_portfolio.get_number_of_shares(stock) << RED << " VAL: " << WHITE << m_portfolio.get_stock_value(stock) << WHITE
                 << string(19 - to_string(m_portfolio.get_number_of_shares(stock)).length() - to_string(m_portfolio.get_stock_value(stock)).length(), ' ') << "| "
                 << sector << WHITE << string(16 - sector.length(), ' ');
@@ -280,24 +280,44 @@ void Game::update() {
         total_value += stock.get_price();
 
         // Calculate the volatility effect
-        double volatility_effect = ((rand() % 2001 - 950) / 1000.0) * stock.get_volatility(); 
+        double volatility = ((rand() % 2001 - 850) / 1000.0) * stock.get_volatility(); 
         
-        // Update the stock's value
-        double new_value = stock.get_price() + stock.get_mean() + volatility_effect;
-        
+        // Update the stock's mean
+        double new_mean = stock.get_mean() + volatility;
+
+        // If stocks have grown too much 
+        if (new_mean > 10 && rand() % 100 < 30) {
+            int tumble = rand() % 30; 
+            new_mean -= tumble; // Adjust the mean accordingly
+        } else if (new_mean > 30 && rand() % 100 < 75) {
+            int tumble = rand() % 50; 
+            new_mean -= tumble; // Adjust the mean accordingly
+        }
+            
+        // If stocks have fell too much 
+        if (new_mean < -10 && rand() % 100 < 30) {
+            int growth = rand() % 30; 
+            new_mean += growth; // Adjust the mean accordingly
+        } else if (new_mean < -30 && rand() % 100 < 60) {
+            int growth = rand() % 50; 
+            new_mean += growth; // Adjust the mean accordingly
+        }
+
         // Update based on the news story
         auto it = find(m_curr_news.begin(), m_curr_news.end(), i);
 
-        if(it != m_curr_news.end()){
-            new_value += m_impact[*it];
+        if (it != m_curr_news.end()) {
+            new_mean += m_impact[*it];
         }
 
+        // Update the stock's value
+        double new_value = stock.get_price() + new_mean;
+
         stock.set_price(new_value);
-        
-        stock.set_mean(stock.get_mean() + volatility_effect);
+        stock.set_mean(new_mean);
 
         // Sum the mean for average growth calculation
-        total_growth += stock.get_mean();
+        total_growth += new_mean;
     }
     
     // Calculate the average growth
@@ -309,6 +329,10 @@ void Game::update() {
 
     // Pass the updated stocks to the portfolio
     m_portfolio.update_stocks(m_stocks);
+    
+    double new_balance = m_portfolio.get_bank_balance() * 1.03;
+
+    m_portfolio.update_bank_balance(new_balance);
 }
 
 void Game::read_news() {
@@ -437,7 +461,7 @@ void Game::draw_clock() {
 }
 
 void Game::deposit() {
-    string adjustment = string(35, ' ');
+    string adjustment = string(40, ' ');
 
     system("cls");
     display_header();
@@ -536,7 +560,7 @@ void Game::withdraw() {
         // Success Message Box
         cout << GREEN;
         cout << adjustment << "+----------------------------------------------+" << endl;
-        cout << adjustment << "| Successfully Withdrew: $" << fixed << setprecision(2) << amount  << string(23 - to_string(amount).length(), ' ') << " |" << endl;
+        cout << adjustment << "| Successfully Withdrew: $" << fixed << setprecision(2) << amount  << string(24 - to_string(amount).length(), ' ') << " |" << endl;
         cout << adjustment << "+----------------------------------------------+" << RESET << endl;
     }
     this_thread::sleep_for(chrono::seconds(2));

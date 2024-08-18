@@ -34,12 +34,12 @@ public:
     void set_price(double price);
 
     // Getter and Setter for volatility
-    int get_volatility() const;
-    void set_volatility(int volatility);
+    double get_volatility() const;
+    void set_volatility(double volatility);
 
     // Getter and Setter for mean
-    int get_mean() const;
-    void set_mean(int mean); 
+    double get_mean() const;
+    void set_mean(double mean); 
 
     // Getter and Setter for sector
     Sector get_sector() const;
@@ -56,8 +56,8 @@ public:
 private:
     string m_name;
     double m_price;
-    int m_volatility;
-    int m_mean;
+    double m_volatility;
+    double m_mean;
     Sector m_sector;
 };
 

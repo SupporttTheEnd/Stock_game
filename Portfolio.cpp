@@ -22,6 +22,10 @@ double Portfolio::get_bank_balance() {
     return m_bank_balance;
 }
 
+void Portfolio::update_bank_balance(double amount){
+    m_bank_balance = amount; 
+}
+
 // Desposit money into bank account
 bool Portfolio::deposit_in_bank(double amount) {
     if (amount <= 0){
@@ -50,7 +54,7 @@ bool Portfolio::withdraw_from_bank(double amount){
         
         return true; 
     }
-    
+
     return false; 
 }
 

@@ -19,11 +19,11 @@ double Stock::get_price() const {
     return m_price;
 }
 
-int Stock::get_volatility() const {
+double Stock::get_volatility() const {
     return m_volatility;
 }
 
-int Stock::get_mean() const {
+double Stock::get_mean() const {
     return m_mean;
 }
 
@@ -37,14 +37,18 @@ void Stock::set_name(const string& name) {
 }
 
 void Stock::set_price(double price) {
+    if (price <= 0) {
+        m_price = 0.01; 
+        return;
+    }
     m_price = price;
 }
 
-void Stock::set_volatility(int volatility) {
+void Stock::set_volatility(double volatility) {
     m_volatility = volatility;
 }
 
-void Stock::set_mean(int mean) {
+void Stock::set_mean(double mean) {
     m_mean = mean;
 }
 

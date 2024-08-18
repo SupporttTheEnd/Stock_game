@@ -17,6 +17,7 @@ public:
 
     // Methods for bank balanced
     double get_bank_balance();
+    void update_bank_balance(double amount); 
     bool deposit_in_bank(double amount);
     bool withdraw_from_bank(double amount); 
 
